@@ -1,1 +1,1 @@
-# -jQuery-AJAX-Form-Submit-With-Validation
+# jQuery-AJAX-Form-Submit-With-Validation
