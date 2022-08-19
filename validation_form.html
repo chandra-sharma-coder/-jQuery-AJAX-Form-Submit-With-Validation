@@ -1,0 +1,191 @@
+//Html Form
+
+<form id="form-contact" class="styled" action="/user_functions.php" method="post">
+            <fieldset>
+              <legend>Contact Form</legend>
+              <ol>
+                <li class="form-row">
+                  <label>Email:</label>
+                  <input id="input-email" type="text" class="text-input required email default" name="email" value="" title="Enter Your Email Address" />
+                </li>
+                <li class="form-row">
+                  <label>Name:</label>
+                  <input id="input-name" type="text" class="text-input required default" name="name" value="" title="Enter Your Full Name" />
+                </li>
+                <li class="form-row">
+                  <label>Phone:</label>
+                  <input id="input-phone" type="text" class="text-input" name="phone" value="" />
+                </li>
+                <li class="form-row">
+                  <label>Comments:</label>
+                  <textarea id="input-message" class="text-area" name="message" cols="40" rows="8"></textarea>
+                </li>
+                <li class="button-row text-right">
+                  <input class="btn-submit" type="submit" value="submit" name="submit" />
+                </li>
+              </ol>
+            </fieldset>
+          </form>
+          
+//Style CSSS
+
+.styled {
+font-family: Arial, sans-serif;
+}
+.styled fieldset {
+border: 1px solid #ccc; padding: 10px;
+}
+.styled fieldset legend {
+font-size: 16px; font-weight: bold; color: #000; text-transform: capitalize; padding: 5px; background: #fff; display: block; margin-bottom: 0; border: 1px solid #ccc;
+}
+.styled fieldset ol, .styled fieldset ol li {
+list-style: none;
+}
+.styled fieldset li.form-row {
+margin-bottom: 3px; padding: 2px 0; width: 100%; overflow: hidden; position: relative;
+}
+.styled label {
+font-size: 12px; display: block; font-weight: bold; float: left; width: 100px; margin-left: 5px; line-height: 24px;
+}
+.styled input.text-input, .styled .text-area {
+background: #fefefe; border-top: 1px solid #909090; border-right: 1px solid #cecece; border-bottom: 1px solid #e1e1e1; border-left: 1px solid #bbb; padding: 3px; width: 220px; font-size: 12px;
+}
+.styled input.text-input.default.active, .styled .text-area.default.active {
+color: #666; font-style: italic;
+}
+.styled fieldset li.button-row {
+margin-bottom: 0; padding: 2px 5px;
+}
+form input.btn-submit {
+padding: 3px 7px; border: 1px solid #fff; background: #066CAA; font-size: 12px;
+}
+
+// Validation CSS
+.styled span.error {
+font-size: 11px; position: absolute; top: 0; right: 0; display: block; padding: 2px;
+}
+.styled fieldset li.error {
+color: #D8000C; background: #fff0f0 url(../media/images/checkers.png) repeat; border: 1px solid #f9c7c7; padding: 5px 0;
+}
+.styled fieldset li.error label {
+text-align: left;
+}
+
+//js
+$(".default").each(function(){
+  var defaultVal = $(this).attr('title');
+  $(this).focus(function(){
+    if ($(this).val() == defaultVal){
+      $(this).removeClass('active').val('');
+    }
+  });
+  $(this).blur(function() {
+    if ($(this).val() == ''){
+      $(this).addClass('active').val(defaultVal);
+    }
+  })
+  .blur().addClass('active');
+});
+
+//jquery
+
+// Declare the loading gif as a variable, which will be used later
+var $loading = $('<div class="loading"><img src="/media/images/loading.gif" alt="" /></div>');
+ 
+// Form validation and submit when button is clicked
+$('.btn-submit').click(function(e){
+ 
+  // Declare the function variables - parent form, form URL and the regex for checking the email
+     var $formId = $(this).parents('form');
+     var formAction = $formId.attr('action');
+     var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+ 
+  // In preparation for validating the form - Remove any active default text and previous errors
+      defaulttextRemove();
+      $('li',$formId).removeClass('error');
+      $('span.error').remove();
+ 
+  // Start validation by selecting all inputs with the class "required"
+      $('.required',$formId).each(function(){
+          var inputVal = $(this).val();
+          var $parentTag = $(this).parent();
+          if(inputVal == ''){
+              $parentTag.addClass('error').append('<span class="error">Required field</span>');
+          }
+ 
+      // Run the email validation using the regex for those input items also having class "email"
+      if($(this).hasClass('email') == true){
+              if(!emailReg.test(inputVal)){
+                  $parentTag.addClass('error').append('<span class="error">Enter a valid email address.</span>');
+              }
+          }
+    });
+ 
+    // All validation complete - check whether any errors exist - if not submit form
+       if ($('span.error').length == "0") {
+           $formId.append($loading.clone());
+           $('fieldset',$formId).hide();
+           $.post(formAction, $formId.serialize(),function(data){
+               $('.loading').remove();
+               $formId.append(data).fadeIn();
+           });
+      }
+    // Use the following to prevent the form being submitted the standard way
+      e.preventDefault();
+});
+
+//Jquery 
+jQuery(document).ready(function($) {
+    var $loading = $('<div class="loading"><img src="/media/images/loading.gif" alt="" /></div>');
+    $(".default").each(function(){
+        var defaultVal = $(this).attr('title');
+        $(this).focus(function(){
+            if ($(this).val() == defaultVal){
+                $(this).removeClass('active').val('');
+            }
+        });
+        $(this).blur(function() {
+            if ($(this).val() == ''){
+                $(this).addClass('active').val(defaultVal);
+            }
+        })
+        .blur().addClass('active');
+    });
+    $('.btn-submit').click(function(e){
+        var $formId = $(this).parents('form');
+        var formAction = $formId.attr('action');
+        defaulttextRemove();
+        var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        $('li',$formId).removeClass('error');
+        $('span.error').remove();
+        $('.required',$formId).each(function(){
+            var inputVal = $(this).val();
+            var $parentTag = $(this).parent();
+            if(inputVal == ''){
+                $parentTag.addClass('error').append('<span class="error">Required field</span>');
+            }
+            if($(this).hasClass('email') == true){
+                if(!emailReg.test(inputVal)){
+                    $parentTag.addClass('error').append('<span class="error">Enter a valid email address.</span>');
+                }
+            }
+        });
+        if ($('span.error').length == "0") {
+            $formId.append($loading.clone());
+            $('fieldset',$formId).hide();
+            $.post(formAction, $formId.serialize(),function(data){
+                $('.loading').remove();
+                $formId.append(data).fadeIn();
+            });
+        }
+        e.preventDefault();
+    });
+});
+function defaulttextRemove(){
+    $('.default').each(function(){
+        var defaultVal = $(this).attr('title');
+        if ($(this).val() == defaultVal){
+            $(this).val('');
+        }
+    });
+}
